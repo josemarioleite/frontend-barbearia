@@ -11,9 +11,9 @@ if (process.env.PROD) {
 let mainWindow
 function createWindow () {
   mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 600,
-    useContentSize: true,
+    // width: 1366,
+    // height: 768,
+    // useContentSize: true,
     webPreferences: {
       nodeIntegration: process.env.QUASAR_NODE_INTEGRATION,
       nodeIntegrationInWorker: process.env.QUASAR_NODE_INTEGRATION
