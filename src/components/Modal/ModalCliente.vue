@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="exibeModal" persistent maximized>
+  <q-dialog v-model="exibeModal" persistent full-height full-width>
       <q-layout view="Lhh lpR fff" container class="bg-brown">
           <q-header class="row bg-dark" style="padding: 5px">
               <q-toolbar-title>Clientes</q-toolbar-title>

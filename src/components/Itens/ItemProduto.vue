@@ -1,11 +1,13 @@
 <template>
   <div>
     <div v-show="somenteLeitura == false" class="col-12 row items-center q-mb-xs">
-      <q-select :disable="somenteLeitura" class="col-md-8 col-xs-12 q-pr-sm" option-value="id" option-label="nome" v-model="produtoSelecionado" :options="produtos" label="Selecionar Produto" />
-      <q-select :disable="somenteLeitura" class="col-md-3 col-xs-12 q-pr-xs" option-value="value" option-label="label" v-model="quantidadeSelecionada" :options="quantidadeOpcoes" label="Quantidade" />
-      <q-btn :disable="somenteLeitura" class="col-md-1 col-xs-2 q-mt-xs" color="primary" icon="add" style="height: 40px" @click="adicionaServico">
-        <q-tooltip anchor="center left" self="center right">Adicionar Serviço</q-tooltip>
-      </q-btn>
+      <q-select :disable="somenteLeitura" class="col-md-8 col-xs-6 q-pr-sm" option-value="id" option-label="nome" v-model="produtoSelecionado" :options="produtos" label="Produto" />
+      <q-select :disable="somenteLeitura" class="col-md-3 col-xs-6 q-pr-xs" option-value="value" option-label="label" v-model="quantidadeSelecionada" :options="quantidadeOpcoes" label="Quantidade" />
+      <div class="col-md-1 col-xs-12 q-mt-xs botaoAdicionar">
+        <q-btn :disable="somenteLeitura" color="primary" icon="add" @click="adicionaServico">
+          <q-tooltip anchor="center left" self="center right">Adicionar Serviço</q-tooltip>
+        </q-btn>
+      </div>
     </div>
       <q-table
         title="Produtos"
@@ -53,7 +55,6 @@
 
 <script>
 import { Get, Post } from 'src/utils/Conexao.js'
-import { ItemAtendimento } from 'src/models/ItensAtendimento/ItemAtendimento.js'
 
 export default {
   name: 'ItemAtendimento',
@@ -231,3 +232,18 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .botaoAdicionar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 40px;
+  }
+
+  @media only screen and (max-width: 499px) {
+    .botaoAdicionar {
+      width: 100%;
+    }
+  }
+</style>

@@ -1,13 +1,15 @@
 <template>
     <div>
         <div v-show="isVisible == true">
-            <hr class="q-mt-sm col-12">
+            <hr class="q-mt-sm col-12 linhaFormaPagamento">
             <div v-show="somenteLeitura == false" class="col-12 row items-center q-mb-xs">
-                <q-select :disable="somenteLeitura" class="col-md-8 col-xs-12 q-pr-sm" option-value="id" option-label="descricao" v-model="formaPagamentoSelecionado" :options="formasDePagamentos" label="Selecionar Forma de Pagamento" />
-                <q-input mask="#.##" reverse-fill-mask prefix="R$" :disable="somenteLeitura" class="col-md-3 col-xs-12 q-pr-xs" v-model.lazy="valorPagamento" label="Valor R$" />
-                <q-btn @click="adicionaFormaDePagamento" :disable="somenteLeitura" class="col-md-1 col-xs-2 q-mt-xs" color="primary" icon="add" style="height: 40px">
-                    <q-tooltip anchor="center left" self="center right">Adicionar Pagamento</q-tooltip>
-                </q-btn>
+                <q-select :disable="somenteLeitura" class="col-md-8 col-xs-8 q-pr-sm" option-value="id" option-label="descricao" v-model="formaPagamentoSelecionado" :options="formasDePagamentos" label="Forma de Pagamento" />
+                <q-input mask="#.##" reverse-fill-mask prefix="R$" :disable="somenteLeitura" class="col-md-3 col-xs-4 q-pr-xs" v-model.lazy="valorPagamento" label="Valor R$" />
+                <div class="col-md-1 col-xs-12 q-mt-xs botaoAdicionar">
+                    <q-btn @click="adicionaFormaDePagamento" :disable="somenteLeitura" color="primary" icon="add">
+                        <q-tooltip anchor="center left" self="center right">Adicionar Pagamento</q-tooltip>
+                    </q-btn>
+                </div>
             </div>
             <q-table
                 dense
@@ -282,5 +284,20 @@ export default {
 </script>
 
 <style>
+    .botaoAdicionar {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 40px;
+    }
 
+    @media only screen and (max-width: 499px) {
+        .linhaFormaPagamento {
+            display: none;
+        }
+
+        .botaoAdicionar {
+            width: 100%;
+        }
+    }
 </style>

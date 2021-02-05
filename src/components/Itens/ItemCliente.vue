@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="exibeModal" persistent>
-      <q-layout view="Lhh lpR fff" container class="bg-dark" style="height: 250px">
+      <q-layout view="Lhh lpR fff" container class="bg-dark layout">
           <q-header class="row bg-primary col-12" style="padding: 5px">
               <q-img src="../../assets/bigode.png" alt="Bigode" style="width: 35px" />
               <q-toolbar-title class="q-mt-xs" style="font-size: 1.2rem; font-family: cursive;">{{tituloModal}}</q-toolbar-title>
@@ -11,7 +11,7 @@
               <q-page padding>
 
                 <div class="col-12 row q-mb-sm" style="padding: 0px">
-                    <div class="componentsMobile col-md-6 col-xs-12" style="padding-right: 5px">
+                    <div class="col-12" style="padding-right: 5px">
                         <q-input :error="erroCampoNome" v-model="nomeCliente" class="inputSelect" outlined label="Nome do Cliente" bg-color="white">
                             <template v-slot:prepend>
                                 <q-icon name="person" color="brown"/>
@@ -19,7 +19,7 @@
                         </q-input>
                     </div>
 
-                    <div class="componentsMobile col-md-6 col-xs-12" style="padding-right: 5px">
+                    <div class="col-12" style="padding-right: 5px">
                         <q-input mask="(##)# ####-####" :error="erroCampoTelefone" v-model="telefoneCliente" class="inputSelect"  outlined label="Telefone / Celular" bg-color="white">
                             <template v-slot:prepend>
                                 <q-icon name="tty" color="brown"/>
@@ -27,16 +27,12 @@
                         </q-input>
                     </div>
                 </div>
-
+                <div class="row justify-center q-mb-md">
+                    <q-btn @click="inserirNovoCliente" icon="save" label="Salvar" color="green" style="border-radius: 5px" />              
+                    <q-btn icon="close" label="Fechar" color="red" class="q-ml-sm" @click="fecharModal" style="border-radius: 5px" />
+                </div>
               </q-page>
           </q-page-container>
-
-          <q-footer class="transparent">
-            <div class="row justify-center q-mb-md">
-                <q-btn @click="inserirNovoCliente" icon="save" label="Salvar" color="green" style="border-radius: 5px" />              
-                <q-btn icon="close" label="Fechar" color="red" class="q-ml-sm" @click="fecharModal" style="border-radius: 5px" />
-            </div>
-          </q-footer>
       </q-layout>
   </q-dialog>
 </template>
@@ -148,10 +144,14 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .inputSelect {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .layout {
+      height: 290px;
   }
 </style>

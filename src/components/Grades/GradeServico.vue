@@ -24,11 +24,11 @@
                     padding="sm"
                     hide-label
                 >
-                    <q-fab-action @click="exibirModalCaixa" color="primary" icon="attach_money" label="Caixa" />
+                    <q-fab-action v-if="dadosUsuario.Root === 'S'" @click="exibirModalCaixa" color="primary" icon="attach_money" label="Caixa" />
                     <q-fab-action @click="abrirModalFormaPagamento" color="secondary" icon="store" label="Forma de Pagamento" />
                 </q-fab>
             </div>
-        </div>       
+        </div>
 
         <div class="q-mt-sm">
             <q-card>
@@ -131,6 +131,7 @@ export default {
             telefoneCliente: '',
             filtroBuscar: '',
             separator: 'cell',
+            dadosUsuario: {},
             dados: [],
             colunas: [
                 { name: 'showme', required: true, label: 'Inclusão', align: 'center', classes: 'bg-grey-2 text-dark', headerClasses: 'bg-dark text-white' },
@@ -208,7 +209,14 @@ export default {
             } else if (tipoTabela == 'C') {
                 this.$refs.tabelaAtendimentoFinalizado.recebeDadosTabela(tipoTabela)
             }
+        },
+        dadosLocalStorage() {
+            const obj = JSON.parse(localStorage.getItem('tokenContent'))
+            this.dadosUsuario = obj
         }
+    },
+    created() {
+        this.dadosLocalStorage()
     },
     mounted () {
         this.recebeDadosTabelas('A')

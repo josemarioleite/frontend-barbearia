@@ -1,11 +1,11 @@
 <template>
-  <q-dialog v-model="exibeModal" persistent full-width :maximized="fullHeight" :full-height="fullHeight" class="modalOrdemServico">
-    <q-layout view="Lhh lpR fff" container class="bg-brown modalOrdemServico" :style="stilo">
+  <q-dialog v-model="exibeModal" persistent full-width :maximized="fullHeight" :full-height="fullHeight">
+    <q-layout view="Lhh lpR fff" container :class="estiloLayout">
 
       <q-header class="row bg-dark" style="padding: 5px">
           <q-img src="../../assets/bigode.png" alt="Bigode" style="width: 35px" />
-          <q-toolbar-title class="q-mt-xs" style="font-size: 1.2rem; font-family: cursive;">{{tituloModal}}</q-toolbar-title>
-          <q-toolbar-title v-show="modalInclusao == false" class="q-mt-xs" style="font-size: 1.2rem; font-family: cursive; text-align: end">Atendimento N°: {{idOrdemServico}}</q-toolbar-title>
+          <q-toolbar-title class="q-mt-xs tituloModal" style="text-align: start">{{tituloModal}}</q-toolbar-title>
+          <q-toolbar-title v-show="modalInclusao == false" class="q-mt-xs tituloModal" style="text-align: end">Atend. N°: {{idOrdemServico}}</q-toolbar-title>
           <q-btn flat v-close-popup dense icon="close" align="right" />
       </q-header>
 
@@ -13,14 +13,14 @@
 
         <div v-show="modalInclusao == true" class="col-12 row q-mb-md">
           <div class="col-md-6 row justify-end items-center q-pr-sm">
-            <hr class="bg-dark" style="width: 90%">
+            <hr class="bg-dark linhaInclusao">
             <q-btn @click="exibirModalProfissional" flat round dense icon="group" color="white" class="bg-accent justify-start">
               <q-tooltip anchor="bottom middle" self="top middle" :offset="[18, 18]" content-style="font-size: 14px">Profissional</q-tooltip>
             </q-btn>
           </div>
 
           <div class="col-md-6 row justify-end items-center q-pr-sm">
-            <hr class="bg-dark" style="width: 90%">
+            <hr class="bg-dark linhaInclusao">
             <q-btn @click="exibirModalCliente" flat round dense icon="person_search" color="white" class="bg-primary justify-start">
               <q-tooltip anchor="bottom middle" self="top middle" :offset="[18, 18]" content-style="font-size: 14px">Cliente</q-tooltip>
             </q-btn>
@@ -28,9 +28,8 @@
         </div>
 
         <!-- Modal Inclusão -->
-
-        <div class="col-12 row q-mb-sm" style="padding: 0px">
-          <div class="componentsMobile col-md-6 col-xs-12" style="padding-right: 5px">
+        <div class="col-12 row q-mb-sm">
+          <div class="componentsMobile col-md-6 col-xs-12">
             <q-select
               @filter="filtraProfissional"
               :options="profissionalSelect"
@@ -64,7 +63,7 @@
             </q-select>
           </div>
 
-          <div class="componentsMobile col-md-6 col-xs-12" style="padding-right: 5px">
+          <div class="componentsMobile col-md-6 col-xs-12">
             <q-select 
               @filter="filtraCliente"
               :options="clienteSelect"
@@ -98,7 +97,6 @@
             </q-select>
           </div>
         </div>
-
         <!-- Final -->
 
         <div v-show="modalInclusao == false" class="col-12 row bg-white borda" style="padding: 5px">
@@ -111,6 +109,9 @@
             />
           </div>
 
+          <div class="col-12 espacoModoCelular"></div>
+          <hr class="bg-dark col-12 espacoModoCelular relative" style="height: 1px">
+
           <div class="col-md-6 col-xs-12" style="padding: 2px">
             <ItemProduto
               ref="itemProdutoAtendimento"
@@ -118,6 +119,9 @@
               :ModoLeitura="somenteLeitura"
             />
           </div>
+
+          <div v-if="modalInsereFormaPagamento === true || modalVisualizacao === true" class="col-12 espacoModoCelular"></div>
+          <hr v-if="modalInsereFormaPagamento === true || modalVisualizacao === true" class="bg-dark col-12 espacoModoCelular relative" style="height: 1px">
 
           <div class="col-md-12 col-xs-12" style="padding: 2px">
             <ItemFormaPagamento
@@ -140,10 +144,10 @@
 
       </q-page-container>
 
-      <!-- <q-footer class="transparent"> -->
-        <div class="row justify-end botaoModal">
-          <q-btn v-show="modalInclusao == true" icon="save" label="Salvar" color="green" @click="adicionarNovoAtendimento" style="border-radius: 5px" />
-          <q-btn icon="close" label="Fechar" color="red" class="q-ml-sm" @click="fechaModal" style="border-radius: 5px" />
+      <!-- <q-footer class="transparent q-mb-md"> -->
+        <div class="row justify-center botaoModal">
+          <q-btn v-show="modalInclusao == true" class="q-mr-sm" icon="save" label="Salvar" color="green" @click="adicionarNovoAtendimento" style="border-radius: 5px" />
+          <q-btn icon="close" label="Fechar" color="red" @click="fechaModal" style="border-radius: 5px" />
         </div>
       <!-- </q-footer> -->
       <ItemCliente ref="itemCliente" @atualizaCampo="recebeDadosTabela" />
@@ -184,6 +188,7 @@ export default{
       profissionais: [],
       profissionalSelect: [],
       clienteSelect: [],
+      estiloLayout: '',
       stilo: '',
       clienteSelecionado: '',
       profissionalSelecionado: '',
@@ -227,7 +232,7 @@ export default{
       this.profissionalSelecionado = null
     },
     exibirModalInclusao(titulo) {
-      this.stilo = 'height: 230px'
+      this.estiloLayout = 'bg-brown modalInclusao'
       this.fullHeight = false
       this.exibeModal = !this.exibeModal
       this.tituloModal = titulo
@@ -240,8 +245,8 @@ export default{
       this.recebeDadosTabela()
     },
     exibirModalVisualizacao(tituloModal, dados) {
+      this.estiloLayout = 'bg-brown'
       this.fullHeight = true
-      this.stilo = 'height: 620px'
       this.exibeModal = !this.exibeModal
       this.somenteLeitura = true
       this.modalVisualizacao = true
@@ -258,8 +263,8 @@ export default{
       this.clienteSelecionado = dados.cliente.nome + ' - ' + dados.cliente.telefoneCelular
     },
     exibirModalInsereFormaPagamento(tituloModal, dados) {
+      this.estiloLayout = 'bg-brown'
       this.fullHeight = true
-      this.stilo = ''
       this.exibeModal = !this.exibeModal
       this.somenteLeitura = true
       this.modalVisualizacao = true
@@ -276,8 +281,8 @@ export default{
       this.clienteSelecionado = dados.cliente.nome + ' - ' + dados.cliente.telefoneCelular
     },
     exibirModalInsereItens(tituloModal, dados) {
+      this.estiloLayout = 'bg-brown'
       this.fullHeight = true
-      this.stilo = 'height: 620px'
       this.exibeModal = !this.exibeModal
       this.modalInsereItens = true
       this.isVisibleFormaPagamento = false
@@ -425,15 +430,22 @@ export default{
 
 <style scoped>
   .inputSelect {
+    padding: 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
+  .modalInclusao {
+    height: 250px;
+  }
+
+  .linhaInclusao {
+    width: 90%;
+  }
+
   .borda {
     border-radius: 10px;
-    /* border-top-right-radius: 10px;
-    border-top-left-radius: 10px; */
   }
 
   .bordaFim {
@@ -441,8 +453,40 @@ export default{
     border-bottom-right-radius: 10px;
   }
 
+  .espacoModoCelular {
+    display: none;
+  }
+
+  .tituloModal {
+    font-size: 1.2rem;
+    font-family: cursive;
+  }
+
   .botaoModal {
-    margin-right: 14px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+  }
+
+  @media only screen and (max-width: 499px) {
+    .modalInclusao {
+      height: 300px;
+    }
+
+    .linhaInclusao {
+      display: none;
+    }
+
+    .botaoModal {
+      margin-bottom: 10px;
+    }
+
+    .espacoModoCelular {
+      display: flex;
+      height: 10px;
+      margin-bottom: 15px;
+    }
+
+    .tituloModal {
+      font-size: 16px;
+    }
   }
 </style>

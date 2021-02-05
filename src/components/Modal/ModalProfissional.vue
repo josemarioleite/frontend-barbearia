@@ -244,6 +244,7 @@ export default {
     methods: {
         abreModalProfissional() {
             this.exibeModal = !this.exibeModal
+            this.recebeDadosProfissional()
         },
         abreModalEdicao(dados) {
             this.$refs.dadosProfissional.abreModalAlteracao('Editar Profissional', dados)
@@ -445,9 +446,6 @@ export default {
                 })
             })
         }
-    },
-    mounted() {
-        this.recebeDadosProfissional()
     }
 }
 </script>

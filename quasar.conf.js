@@ -13,7 +13,7 @@ module.exports = function (/* ctx */) {
       'material-icons', // optional, you are not bound to it
     ],
     build: {
-      vueRouterMode: 'history',
+      vueRouterMode: 'hash',
       devtool: 'source-map',
       extendWebpack (cfg) {
 cfg.module.rules.push({

@@ -16,7 +16,7 @@
 
                       <q-space />
 
-                      <q-input v-model="valorServico" :error="erroValorServico" :error-message="erroMSGValor" class="col-md-5 col-xs-12" color="dark" label-color="dark" bg-color="white" filled label="Valor do Serviço">
+                      <q-input mask="#.##" reverse-fill-mask prefix="R$" v-model="valorServico" :error="erroValorServico" :error-message="erroMSGValor" class="col-md-5 col-xs-12" color="dark" label-color="dark" bg-color="white" filled label="Valor do Serviço">
                         <template v-slot:prepend>
                             <q-icon name="attach_money" color="brown" />
                         </template>
@@ -256,7 +256,7 @@ export default {
                 this.confirmacao('incluir').then(() => {
                     this.desabilitarBotao = true
                     var servico = new Servico()
-                    servico.Descricao = this.descricaoServico
+                    servico.Descricao = this.descricaoServico.toUpperCase()
                     servico.Valor = this.valorServico
                     this.$q.notify({
                         message: 'Carregando...',

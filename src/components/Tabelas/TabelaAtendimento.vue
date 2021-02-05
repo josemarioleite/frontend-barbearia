@@ -101,7 +101,7 @@
             <q-td key="acoes" :props="props">
                 <q-btn-dropdown color="brown" dropdown-icon="build" align="center">
                     <q-list>
-                        <q-item v-if="props.row.situacaoId == 3" clickable v-close-popup @click="abreRelatorioAtendimento(props.row.id)">
+                        <!-- <q-item v-if="props.row.situacaoId == 3" clickable v-close-popup @click="abreRelatorioAtendimento(props.row.id)">
                             <q-item-section avatar>
                                 <q-avatar icon="receipt_long" color="accent" text-color="white" />
                             </q-item-section>
@@ -111,7 +111,7 @@
                             <q-item-section side>
                                 <q-icon name="receipt" color="accent" />
                             </q-item-section>
-                        </q-item>
+                        </q-item> -->
 
                         <q-item v-if="props.row.situacaoId == 3" clickable v-close-popup @click="ExibeModalVisualizacao(props.row)">
                             <q-item-section avatar>

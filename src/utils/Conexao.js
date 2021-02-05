@@ -4,7 +4,7 @@ var protocolo = location.protocol
 var portaHttp = 5000
 var portaHttps = 5001
 
-var url = protocolo + '//servidornuvem.ddns.net:'
+var url = protocolo + '//192.168.0.243:'
 if (protocolo === 'http:') {
   url = url + portaHttp + '/api/'
 } else if (protocolo === 'https:') {

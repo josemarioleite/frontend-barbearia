@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="exibeModal" persistent class="tamanhoModal">
+  <q-dialog v-model="exibeModal" persistent>
       <q-layout view="Lhh lpR fff" container class="bg-dark layout">
           <q-header class="row bg-primary col-12" style="padding: 5px">
               <q-img src="../../assets/bigode.png" alt="Bigode" style="width: 35px" />
@@ -8,9 +8,9 @@
           </q-header>
 
           <q-page-container>
-              <q-page padding>
+              <q-page style="padding: 10px">
 
-                <div class="col-12 row q-mb-sm">
+                <div class="col-12">
                     <div class="componentsMobile col-xs-12" style="padding-right: 5px">
                         <q-input :error="erroCampoNome" v-model="nomeProfissional" class="inputSelect" outlined label="Nome do Profissional" bg-color="white">
                             <template v-slot:prepend>
@@ -53,23 +53,42 @@
                     </div>
 
                     <div class="componentsMobile col-xs-12" style="padding-right: 5px">
-                        <q-input mask="###" :error="erroCampoPorcentagem" v-model="porcentagem" class="inputSelect"  outlined label="Porcentagem" bg-color="white">
+                        <q-input mask="#.##" reverse-fill-mask :error="erroCampoPorcentagem" v-model="porcentagem" class="inputSelect"  outlined label="Porcentagem" bg-color="white">
                             <template v-slot:prepend>
                                 <q-icon name="money" color="brown"/>
                             </template>
                         </q-input>
                     </div>
+                    <div class="row col-12 items-center justify-center" style="padding-right: 5px">
+                        <label class="text-white">Porcentagem por Produto ?</label>
+                        <q-checkbox dark v-model="recebePorcentagemProduto" />
+                        <q-input v-show="recebePorcentagemProduto == true" 
+                            v-model.number="porcentagemProduto"
+                            reverse-fill-mask
+                            :error="erroPorcentagemProduto"
+                            color="dark"
+                            label-color="dark"
+                            bg-color="white"
+                            filled
+                            mask="#.##"
+                            suffix="%"
+                            prefix="%"
+                            class="col-md-7 col-xs-12"
+                            label="Porcentagem do Produto"
+                        >
+                            <template v-slot:prepend>
+                                <q-icon name="money" color="brown" />
+                            </template>
+                        </q-input>
+                    </div>
+                    <div class="row justify-center" style="padding: 10px">
+                        <q-btn icon="close" label="Fechar" color="red" @click="fecharModal" style="border-radius: 5px" />
+                        <q-btn @click="insereNovoProfissional" icon="save" class="q-ml-sm" label="Salvar" color="green" style="border-radius: 5px" />              
+                    </div>
                 </div>
 
               </q-page>
           </q-page-container>
-
-          <q-footer class="transparent">
-            <div class="row justify-center q-mb-md">
-                <q-btn icon="close" label="Fechar" color="red" @click="fecharModal" style="border-radius: 5px" />
-                <q-btn @click="insereNovoCliente" icon="save" class="q-ml-sm" label="Salvar" color="green" style="border-radius: 5px" />              
-            </div>
-          </q-footer>
       </q-layout>
   </q-dialog>
 </template>
@@ -88,6 +107,9 @@ export default {
             erroCampoData: false,
             erroCampoCPF: false,
             erroCampoPorcentagem: false,
+            erroPorcentagemProduto: false,
+            recebePorcentagemProduto: false,
+            porcentagemProduto: '',
             porcentagem: '',
             tituloModal: '',
             nomeProfissional: '',
@@ -156,12 +178,22 @@ export default {
                     campoVazio = false
                 }
 
+                if (this.recebePorcentagemProduto == true) {
+                    if (this.porcentagemProduto === '' || this.porcentagemProduto === null) {
+                        this.erroPorcentagemProduto = true
+                        campoVazio = true
+                    } else {
+                        this.erroPorcentagemProduto = false
+                        campoVazio = false
+                    }
+                }
+
                 if (campoVazio == false) {
                     resolve(true)
                 }
             })
         },
-        insereNovoCliente() {
+        insereNovoProfissional() {
             this.validaCampos().then(() => {
                 this.confirmacao('Tem certeza que deseja incluir este Profissional ?').then(() => {
                     this.$q.notify({
@@ -171,11 +203,18 @@ export default {
                     })
                     setTimeout(() => {
                         var profissional = new Profissional()
-                        profissional.Nome = this.nomeProfissional
+                        profissional.Nome = this.nomeProfissional.toUpperCase()
                         profissional.DataNascimento = this.dataNascimentoProfissional
                         profissional.CPF = this.cpfProfissional
                         profissional.TelefoneCelular = this.telefoneProfissional
                         profissional.Porcentagem = parseInt(this.porcentagem)
+                        if (this.recebePorcentagemProduto == true) {
+                            profissional.GeraPorcentagemProduto = 'S'
+                            profissional.PorcentagemProduto = parseInt(this.porcentagemProduto)
+                        } else {
+                            profissional.GeraPorcentagemProduto = 'N'
+                            profissional.PorcentagemProduto = 0
+                        }
                         Post('v1/profissional', profissional).then(res => {
                             if (res.data.status == true) {
                                 this.$q.notify({
