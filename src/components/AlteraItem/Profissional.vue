@@ -64,40 +64,12 @@
                 </div>
 
                 <div class="col-xs-12">
-                    <q-input :error="erroPorcentagemProfissional" :readonly="somenteLeitura" color="black" bg-color="white" filled v-model="porcentagemProfissional" label="Porcentagem">
+                    <q-input reverse-fill-mask mask="#,##" @click="porcentagemProfissional = ''" :error="erroPorcentagemProfissional" :readonly="somenteLeitura" color="black" bg-color="white" filled v-model.number="porcentagemProfissional" label="Porcentagem">
                         <template v-slot:prepend>
                             <q-icon name="money" color="brown" />
                         </template>
                         <template v-slot:append>
                             <q-icon v-show="somenteLeitura == false" name="close" @click="porcentagemProfissional = ''" />
-                        </template>
-                    </q-input>
-                </div>
-
-                <div class="row col-12 items-center justify-center">
-                    <label class="col-md-4 text-white">Porcentagem por Produto ?</label>
-                    <q-checkbox class="col-md-1" dark v-model="recebePorcentagemProduto" />
-                    <q-input v-show="recebePorcentagemProduto == true" 
-                        filled
-                        v-model.number="porcentagemProduto"
-                        reverse-fill-mask
-                        :error="erroPorcentagemProduto"
-                        color="dark"
-                        label-color="dark"
-                        bg-color="white"
-                        mask="#.##"
-                        suffix="%"
-                        prefix="%"
-                        class="col-md-7 col-xs-12"
-                        label="Porcentagem do Produto"
-                        @click="porcentagemProduto = ''"
-                    >
-                        <template v-slot:prepend>
-                            <q-icon name="money" color="brown" />
-                        </template>
-
-                        <template v-slot:append>
-                            <q-icon v-show="somenteLeitura == false" name="close" @click="porcentagemProduto = ''" />
                         </template>
                     </q-input>
                 </div>
@@ -124,8 +96,6 @@ export default {
             exibeModal: false,
             somenteLeitura: false,
             modalAlteracao: false,
-            recebePorcentagemProduto: false,
-            erroPorcentagemProduto: false,
             erroPorcentagemProfissional: false,
             erroTelefoneProfissional: false,
             erroNomeProfissional: false,
@@ -137,7 +107,6 @@ export default {
             telefoneProfissional: '',
             dataNascimento: '',
             porcentagemProfissional: '',
-            porcentagemProduto: '',
             tituloModal: '',
         }
     },
@@ -155,12 +124,6 @@ export default {
             this.cpfProfissional = dados.cpf
             this.porcentagemProfissional = dados.porcentagem + ' %'
             this.dataNascimento = new Date(dados.dataNascimento).toLocaleDateString('pt-BR')
-            this.porcentagemProduto = dados.porcentagemProduto.toFixed(2)
-            if (dados.geraPorcentagemProduto === 'N') {
-                this.recebePorcentagemProduto = false
-            } else if (dados.geraPorcentagemProduto === 'S') {
-                this.recebePorcentagemProduto = true
-            }
         },
         confirmacao() {
             return new Promise((resolve, reject) => {
@@ -227,16 +190,6 @@ export default {
                     campoVazio = false
                 }
 
-                if (this.recebePorcentagemProduto == true) {
-                    if (this.porcentagemProduto === '' || this.porcentagemProduto === null) {
-                        this.erroPorcentagemProduto = true
-                        campoVazio = true
-                    } else {
-                        this.erroPorcentagemProduto = false
-                        campoVazio = false
-                    }
-                }
-
                 if (campoVazio === false) {
                     resolve(true)
                 }
@@ -258,19 +211,13 @@ export default {
                     profissional.DataNascimento = await ConverteStringPraDatetime(this.dataNascimento)
                     profissional.CPF = this.cpfProfissional
                     profissional.TelefoneCelular = this.telefoneProfissional
-                    profissional.Porcentagem = parseInt(this.porcentagemProfissional)
-                    if (this.recebePorcentagemProduto == true) {
-                        profissional.GeraPorcentagemProduto = 'S'
-                        profissional.PorcentagemProduto = parseInt(this.porcentagemProduto)
-                    } else {
-                        profissional.GeraPorcentagemProduto = 'N'
-                        profissional.PorcentagemProduto = 0
-                    }                    
+                    profissional.Porcentagem = parseFloat(this.porcentagemProfissional)                 
                     this.$q.notify({
                         color: 'primary',
                         message: 'Carregando...',
                         timeout: '1000'
                     })
+                    console.log(profissional)
                     setTimeout(() => {
                         var id = parseInt(this.idProfissional)
                         Put('v1/profissional/' + id, profissional).then(res => {

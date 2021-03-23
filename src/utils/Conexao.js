@@ -4,7 +4,7 @@ var protocolo = location.protocol
 var portaHttp = 5000
 var portaHttps = 5001
 
-var url = protocolo + '//192.168.0.243:'
+var url = protocolo + '//localhost:'
 if (protocolo === 'http:') {
   url = url + portaHttp + '/api/'
 } else if (protocolo === 'https:') {
@@ -30,6 +30,19 @@ export function Patch (rota, objeto) {
     preparaConexao().then(() => {
       var json = JSON.stringify(objeto)
       axios.patch(url + rota, json).then((result) => {
+        resolve(result)
+      }).catch((err) => {
+        reject(err)
+      })
+    })
+  })
+}
+
+export function PatchComCabecalho (rota, objeto, cabecalho) {
+  return new Promise((resolve, reject) => {
+    preparaConexao().then(() => {
+      var json = JSON.stringify(objeto)
+      axios.patch(url + rota, json, 'Bearer ' + cabecalho).then((result) => {
         resolve(result)
       }).catch((err) => {
         reject(err)

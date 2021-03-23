@@ -13,6 +13,7 @@
                 </div>
             </div>
         </div>
+        <ModalTrocaSenha ref="modalTrocaSenha" />
     </div>
 </template>
 
@@ -20,8 +21,10 @@
 import {Usuario} from '../models/Usuarios/Usuario'
 import {Post, Get} from '../utils/Conexao'
 import {DecodeJWT} from '../utils/Jwt'
+import ModalTrocaSenha from 'src/components/Modal/ModalAlteraSenha.vue'
 export default {
     name: 'Login',
+    components: { ModalTrocaSenha },
     data () {
         return {
             usuario: '',
@@ -32,16 +35,17 @@ export default {
         nextFocus() {
             this.$refs.inputSenha.focus()
         },
+        abreModalAlteraSenha() {
+            this.$refs.modalTrocaSenha.abreModalTrocaSenha()
+        },
         fazerLogin () {
             const user = new Usuario()
-            const login = this.usuario
-            const senha = this.senha
-            user.Login = login.toLowerCase()
-            user.Senha = senha.toLowerCase()
+            user.Login = this.usuario.toLowerCase()
+            user.Senha = this.senha.toLowerCase()
             this.$q.notify({
                 message: 'carregando...',
                 color: 'blue',
-                timeout: '1000'
+                timeout: '500'
             })
             setTimeout(() => {
                 Post('v1/auth/login', user).then(async (res) => {
@@ -53,7 +57,32 @@ export default {
                     localStorage.setItem('token', res.data.token)
                     localStorage.setItem('tokenContent', await DecodeJWT())
                     this.$router.push('/home')
-                }).catch(err => {
+                    // var dados = res.data
+                    // if (dados.ativo === 'S' && dados.primeiroAcesso === 'S') {
+                    //     localStorage.setItem('token', res.data.token)
+                    //     this.abreModalAlteraSenha(res.data.idUsuario, res.data.token)
+                    // } else if (dados.ativo === 'N') {
+                    //     this.$q.notify({
+                    //         message: 'Este usuário foi desativado!',
+                    //         color: 'red',
+                    //         timeout: 2000
+                    //     })
+                    // } else if (dados.ativo === 'S' && dados.primeiroAcesso === 'N') {
+                    //     this.$q.notify({
+                    //         message: 'Logado com sucesso',
+                    //         color: 'green',
+                    //         timeout: 3000
+                    //     })
+                    //     localStorage.setItem('token', res.data.token)
+                    //     localStorage.setItem('tokenContent', await DecodeJWT())
+                    // } else {
+                    //     this.$q.notify({
+                    //         message: res.data.msg,
+                    //         color: 'red',
+                    //         timeout: 3000
+                    //     })
+                    // }
+                }).catch(() => {
                     this.senha = null
                     this.$q.notify({
                         message: 'Erro, tente novamente',
@@ -61,7 +90,7 @@ export default {
                         color: 'red'
                     })
                 })
-            },2000)
+            },1000)
         },
         verificaTokenValido() {
             var obj = localStorage.getItem('token')

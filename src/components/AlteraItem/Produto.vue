@@ -31,12 +31,36 @@
                 </div>
 
                 <div class="col-md-4 col-xs-12 inputValor">
-                    <q-input @click="focusValorProduto" :error="erroValorProduto" :error-message="erroMsgValorProduto" :readonly="somenteLeitura" color="black" bg-color="white" filled v-model="valorProduto" label="Valor R$">
+                    <q-input prefix="R$" reverse-fill-mask mask="#.##" @click="focusValorProduto" :error="erroValorProduto" :error-message="erroMsgValorProduto" :readonly="somenteLeitura" color="black" bg-color="white" filled v-model="valorProduto" label="Valor R$">
                         <template v-slot:prepend>
                             <q-icon name="attach_money" color="brown" />
                         </template>
                         <template v-slot:append>
                             <q-icon v-show="somenteLeitura == false" name="close" @click="valorProduto = ''" />
+                        </template>
+                    </q-input>
+                </div>
+
+                <div class="col-md-6 col-xs-12 inputComissaoPorcentagem">
+                    <q-select :error="erroCampoComissaoPorcentagem" :error-message="erroMsgComissaoPorcentagem" class="" color="dark" label-color="dark" bg-color="white" v-model="opcaoSelecionado" option-label="label" option-value="value" :options="opcoes" filled label="Comissão / Porcentagem">
+                        <template v-slot:prepend>
+                            <q-icon name="price_check" color="brown" />
+                        </template>
+                        <template v-slot:append>
+                            <q-icon v-show="somenteLeitura == false" name="close" @click="opcaoSelecionado = null" />
+                        </template>
+                    </q-select>
+                </div>
+
+                <q-space />
+
+                <div class="col-md-6 col-xs-12 inputValorComissaoPorcentagem">
+                    <q-input @click="valorComissaoPorcentagem = ''" mask="#.##" prefix="R$" suffix="%" reverse-fill-mask :error="erroCampoValorComissaoPorcentagem" :error-message="erroMsgValorComissaoPorcentagem" v-model="valorComissaoPorcentagem" class="col-md-3 col-xs-12" color="dark" label-color="dark" bg-color="white" filled label="Valor Comis./Porc.">
+                        <template v-slot:prepend>
+                            <q-icon name="attach_money" color="brown" />
+                        </template>
+                        <template v-slot:append>
+                            <q-icon v-show="somenteLeitura == false" name="close" @click="valorComissaoPorcentagem = ''" />
                         </template>
                     </q-input>
                 </div>
@@ -62,12 +86,22 @@ export default {
             modalAlteracao: false,
             erroNomeProduto: false,
             erroValorProduto: false,
+            erroCampoComissaoPorcentagem: false,
+            erroCampoValorComissaoPorcentagem: false,
+            valorComissaoPorcentagem: '',
+            erroMsgValorComissaoPorcentagem: '',
+            erroMsgComissaoPorcentagem: '',
             erroMsgNomeProduto: '',
             erroMsgValorProduto: '',
             idProduto: '',
             nomeProduto: '',
             valorProduto: '',
             tituloModal: '',
+            opcaoSelecionado: '',
+            opcoes: [
+                {value: 'P', label: 'Porcentagem'},
+                {value: 'C', label: 'Comissão'},
+            ],
         }
     },
     methods: {
@@ -81,7 +115,9 @@ export default {
             this.tituloModal = tituloModal
             this.idProduto = dados.id
             this.nomeProduto = dados.nome
-            this.valorProduto = 'R$ ' + dados.valor.toFixed(2)
+            this.valorProduto = dados.valor.toFixed(2)
+            this.valorComissaoPorcentagem = dados.valorPorcentagemComissao.toFixed(2)
+            this.opcaoSelecionado = dados.porcentagemComissao === 'C' ? 'Comissão' : 'Porcentagem'
         },
         confirmacao(msg) {
             return new Promise((resolve, reject) => {
@@ -136,6 +172,24 @@ export default {
                     campoVazio = false
                 }
 
+                if (this.opcaoSelecionado === '' || this.opcaoSelecionado === null) {
+                    this.erroCampoComissaoPorcentagem = true
+                    this.erroMsgComissaoPorcentagem = 'O Campo "Comissão/Porcentagem" é obrigatório!'
+                    campoVazio = true
+                } else {
+                    this.erroCampoComissaoPorcentagem = false
+                    campoVazio = false
+                }
+
+                if (this.valorComissaoPorcentagem === '' || this.valorComissaoPorcentagem === null) {
+                    this.erroCampoValorComissaoPorcentagem = true
+                    this.erroMsgValorComissaoPorcentagem = 'O Campo "Valor Comissão/Porcentagem" é obrigatório!'
+                    campoVazio = true
+                } else {
+                    this.erroCampoValorComissaoPorcentagem = false
+                    campoVazio = false
+                }
+
                 if (campoVazio === false) {
                     resolve(true)
                 }
@@ -180,18 +234,18 @@ export default {
             this.validaCampos().then(() => {
                 this.confirmacao('alterar').then(() => {
                     var alteraProduto = Object()
-                    alteraProduto.Id = Number(this.idProduto)
+                    alteraProduto.Id = parseInt(this.idProduto)
                     alteraProduto.Nome = this.nomeProduto
-                    alteraProduto.Valor = this.valorProduto
-                    console.log(alteraProduto)
+                    alteraProduto.Valor = parseFloat(this.valorProduto)
+                    alteraProduto.PorcentagemComissao = this.opcaoSelecionado.value.toUpperCase()
+                    alteraProduto.ValorPorcentagemComissao = parseFloat(this.valorComissaoPorcentagem)
                     this.$q.notify({
                         message: 'Carregando...',
                         color: 'primary',
                         timeout: 1000
                     })
                     setTimeout(() => {
-                        Put('v1/produto/' + this.idProduto, alteraProduto).then(res => {
-                            console.log(res)
+                        Put('v1/produto/' + parseInt(this.idProduto), alteraProduto).then(res => {
                             if (res.data.status == true) {
                                 this.$q.notify({
                                     message: res.data.msg,
@@ -228,10 +282,10 @@ export default {
     .modal {
         border: 1px solid #000;
         border-radius: 10px;
-        height: 210px;
+        height: 300px;
     }
 
-    .inputID, .inputNome, .inputValor {
+    .inputID, .inputNome, .inputValor, .inputComissaoPorcentagem, .inputValorComissaoPorcentagem {
         padding: 5px;
     }
 
@@ -240,14 +294,14 @@ export default {
             margin-bottom: 20px;
         }
 
-        .inputID, .inputNome, .inputValor {
+        .inputID, .inputNome, .inputValor, .inputComissaoPorcentagem, .inputValorComissaoPorcentagem {
             padding: 0px;
         }
 
         .modal {
             border: 1px solid #000;
             border-radius: 10px;
-            height: 350px;
+            height: 510px;
         }
     }
 </style>

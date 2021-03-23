@@ -1,26 +1,45 @@
 <template>
-  <q-dialog v-model="exibeModal" persistent full-height>
+  <q-dialog v-model="exibeModal" persistent full-height full-width>
         <q-layout view="Lhh lpR fff" container class="bg-brown">
           <q-header class="bg-dark row col-12" style="padding: 5px">
-              <q-toolbar-title class="col-12">Produtos</q-toolbar-title>
+              <q-toolbar-title>Produtos</q-toolbar-title>
+              <q-btn flat v-close-popup dense icon="close" align="right" />
           </q-header>
 
           <q-page-container>
                 <q-page style="padding: 10px">
                     <div class="row">
-                        <q-input :error="erroCampoNome" :error-message="erroMsgNome" v-model="nomeProduto" class="col-md-5 col-xs-12" color="dark" label-color="dark" bg-color="white" filled label="Nome do Produto">
+                        <q-input :error="erroCampoNome" :error-message="erroMsgNome" v-model="nomeProduto" class="col-md-3 col-xs-12" color="dark" label-color="dark" bg-color="white" filled label="Nome">
                             <template v-slot:prepend>
-                                <q-icon name="store" color="brown" />
+                                <q-icon name="drive_file_rename_outline" color="brown" />
                             </template>
                         </q-input>
 
                         <q-space />
 
-                        <q-input mask="#.##" prefix="R$" reverse-fill-mask :error="erroCampoValor" :error-message="erroMsgValor" v-model="valorProduto" class="col-md-5 col-xs-12" color="dark" label-color="dark" bg-color="white" filled label="Valor do Produto">
+                        <q-input mask="#.##" prefix="R$" reverse-fill-mask :error="erroCampoValor" :error-message="erroMsgValor" v-model="valorProduto" class="col-md-2 col-xs-12" color="dark" label-color="dark" bg-color="white" filled label="Valor">
                             <template v-slot:prepend>
                                 <q-icon name="attach_money" color="brown" />
                             </template>
                         </q-input>
+                        
+                        <q-space />
+
+                        <div class="col-md-3 col-xs-12">
+                            <q-select :error="erroCampoComissaoPorcentagem" :error-message="erroMsgComissaoPorcentagem" class="" color="dark" label-color="dark" bg-color="white" v-model="opcaoSelecionado" option-label="label" option-value="value" :options="opcoes" filled label="Comissão / Porcentagem">
+                                <template v-slot:prepend>
+                                    <q-icon name="price_check" color="brown" />
+                                </template>
+                            </q-select>
+                        </div>
+
+                        <q-space />
+
+                        <q-input mask="#.##" prefix="R$" suffix="%" reverse-fill-mask :error="erroCampoValorComissaoPorcentagem" :error-message="erroMsgValorComissaoPorcentagem" v-model="valorComissaoPorcentagem" class="col-md-3 col-xs-12" color="dark" label-color="dark" bg-color="white" filled label="Valor Comis./Porc.">
+                            <template v-slot:prepend>
+                                <q-icon name="attach_money" color="brown" />
+                            </template>
+                        </q-input>                    
 
                         <q-space />
 
@@ -71,6 +90,16 @@
                             <q-td key="valor" :props="props">R$ {{props.row.valor.toFixed(2)}}</q-td>
                         </template>
 
+                        <template v-slot:body-cell-comissaoPorcentagem="props">
+                            <q-td v-if="props.row.porcentagemComissao === 'C'" key="comissaoPorcentagem" :props="props"><div>Comissão</div></q-td>
+                            <q-td v-else key="comissaoPorcentagem" :props="props"><div>Porcentagem</div></q-td>
+                        </template>
+
+                        <template v-slot:body-cell-valorComissaoPorcentagem="props">
+                            <q-td v-if="props.row.porcentagemComissao === 'C'" key="valorComissaoPorcentagem" :props="props">R$ {{props.row.valorPorcentagemComissao.toFixed(2)}}</q-td>
+                            <q-td v-else key="valorComissaoPorcentagem" :props="props">% {{props.row.valorPorcentagemComissao.toFixed(2)}}</q-td>
+                        </template>
+
                         <template v-slot:body-cell-acoes="props">
                             <q-td key="acoes" :props="props">
                                 <q-btn-dropdown color="brown" dropdown-icon="build" align="center">
@@ -103,14 +132,11 @@
                             </q-td>
                         </template>
                     </q-table>
-                    <div class="botaoFechar">
+                    <div class="q-mt-sm row justify-center">
                         <q-btn color="red" icon="close" label="Fechar" @click="fechaModal" />
                     </div>
                 </q-page>
           </q-page-container>
-
-          <!-- <q-footer class="transparent"> -->
-          <!-- </q-footer> -->
           <DadosProduto ref="dadosProduto" @atualizaTabela="recebeDadosProdutos" />
         </q-layout>
   </q-dialog>
@@ -131,20 +157,32 @@ export default {
             totalLinhasTabela: [6],
             nomeProduto: '',
             valorProduto: '',
+            valorComissaoPorcentagem: '',
             filtroTabela: '',
             erroMsgNome: '',
             erroMsgValor: '',
+            erroMsgValorComissaoPorcentagem: '',
+            erroMsgComissaoPorcentagem: '',
             carregando: false,
             erroCampoNome: false,
             erroCampoValor: false,
+            erroCampoComissaoPorcentagem: false,
+            erroCampoValorComissaoPorcentagem: false,
             desabilitarBotao: false,
             exibeModal: false,
+            opcaoSelecionado: '',
+            opcoes: [
+                {value: 'P', label: 'Porcentagem'},
+                {value: 'C', label: 'Comissão'},
+            ],
             dados: [],
             colunas: [
                 { name: 'id', align: 'right', label: 'Id', field: 'id', sortable: true, headerClasses: 'bg-dark text-white text-bold' },
                 { name: 'nome', align: 'left', label: 'Descrição', field: 'nome', sortable: true, headerClasses: 'bg-dark text-white text-bold' },
                 { name: 'dataInclusao', align: 'left', label: 'Data Inclusão', sortable: true, headerClasses: 'bg-dark text-white text-bold' },
                 { name: 'valor', align: 'right', label: 'Valor', sortable: true, headerClasses: 'bg-dark text-white text-bold' },
+                { name: 'comissaoPorcentagem', align: 'right', label: 'Comissão/Porcentagem', sortable: true, headerClasses: 'bg-dark text-white text-bold' },
+                { name: 'valorComissaoPorcentagem', align: 'right', label: 'Valor Comis./Porcen.', sortable: true, headerClasses: 'bg-dark text-white text-bold' },
                 { name: 'acoes', align: 'center', label: 'Ações', headerClasses: 'bg-dark text-white text-bold'}
             ]
         }
@@ -166,6 +204,8 @@ export default {
         limparCampos() {
             this.nomeProduto = null
             this.valorProduto = null
+            this.opcaoSelecionado = null
+            this.valorComissaoPorcentagem = null
         },
         validaCampos() {
             return new Promise(resolve => {
@@ -186,6 +226,24 @@ export default {
                     campoVazio = true
                 } else {
                     this.erroCampoValor = false
+                    campoVazio = false
+                }
+
+                if (this.opcaoSelecionado === '' || this.opcaoSelecionado === null) {
+                    this.erroCampoComissaoPorcentagem = true
+                    this.erroMsgComissaoPorcentagem = 'O Campo "Comissão/Porcentagem" é obrigatório!'
+                    campoVazio = true
+                } else {
+                    this.erroCampoComissaoPorcentagem = false
+                    campoVazio = false
+                }
+
+                if (this.valorComissaoPorcentagem === '' || this.valorComissaoPorcentagem === null) {
+                    this.erroCampoValorComissaoPorcentagem = true
+                    this.erroMsgValorComissaoPorcentagem = 'O Campo "Valor Comissão/Porcentagem" é obrigatório!'
+                    campoVazio = true
+                } else {
+                    this.erroCampoValorComissaoPorcentagem = false
                     campoVazio = false
                 }
 
@@ -253,6 +311,8 @@ export default {
                     const novoProduto = new Produto()
                     novoProduto.Nome = this.nomeProduto.toUpperCase()
                     novoProduto.Valor = parseFloat(valor)
+                    novoProduto.PorcentagemComissao = this.opcaoSelecionado.value.toUpperCase()
+                    novoProduto.ValorPorcentagemComissao = parseFloat(this.valorComissaoPorcentagem)
                     this.$q.notify({
                         message: 'Carregando...',
                         color: 'primary',
@@ -301,7 +361,7 @@ export default {
         display: flex;
         justify-content: center;
         width: 60px;
-        height: 57px;
+        height: 56px;
     }
 
     .tamanhoBotao {
@@ -314,13 +374,6 @@ export default {
 
     .iconeBotaoAdicionar {
         margin-top: 12px;
-    }
-
-    .botaoFechar {
-        margin: 5px;
-        margin-left: 220px;
-        bottom: 0;
-        left: 0;
     }
 
     @media only screen and (max-width: 499px) {

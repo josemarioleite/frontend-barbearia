@@ -28,7 +28,6 @@
         <template v-slot:top-right>
             <div v-show="botaoAdicionarVisivel == true">
                 <q-btn rounded class="botaoAdicionar" @click="AbreModalInclusao" color="teal" icon="add">
-                    <label class="hide-label">Adicionar</label>
                     <q-tooltip anchor="bottom middle" self="top middle" :offset="[18, 18]" content-style="font-size: 14px">Adicionar Novo Atendimento</q-tooltip>
                 </q-btn>
             </div>
@@ -56,7 +55,7 @@
             </q-td>
         </template>
 
-        <template v-slot:body-cell-situacao="props">
+        <!-- <template v-slot:body-cell-situacao="props">
             <q-td key="situacao" :props="props">
                 <div v-if="props.row.situacaoId == 1">
                     <q-btn icon="iens" round dense color="primary" :props="props" size="10px" class="q-mr-sm">
@@ -79,7 +78,7 @@
                     </q-btn>
                 </div>
             </q-td>
-        </template>
+        </template> -->
 
         <template v-slot:body-cell-cliente="props">
             <q-td key="cliente" :props="props">{{props.row.cliente.nome}}</q-td>
@@ -174,7 +173,7 @@ export default {
             colunas: [
                 { name: 'showme', required: true, label: 'Inclusão', align: 'center', classes: 'bg-grey-2 text-dark', headerClasses: 'bg-dark text-white' },
                 { name: 'id', required: true, label: 'ID', align: 'right', field: 'id', classes: 'bg-grey-2 text-dark', headerClasses: 'bg-dark text-white' },
-                { name: 'situacao', required: true, label: 'Situação', align: 'center', classes: 'bg-grey-2 text-dark', headerClasses: 'bg-blue-10 text-white' },
+                // { name: 'situacao', required: true, label: 'Situação', align: 'center', classes: 'bg-grey-2 text-dark', headerClasses: 'bg-blue-10 text-white' },
                 { name: 'cliente', required: true, label: 'Cliente', align: 'left', classes: 'bg-grey-3 text-dark', headerClasses: 'bg-grey-8 text-white' },
                 { name: 'celular', required: true, label: 'Celular', align: 'left', classes: 'bg-grey-3 text-dark', headerClasses: 'bg-grey-8 text-white' },
                 { name: 'dataServico', required: true, label: 'Data do Serviço', align: 'center', classes: 'bg-grey-2 text-dark', headerClasses: 'bg-dark text-white' },
@@ -283,6 +282,8 @@ export default {
 
     .botaoAdicionar {
         margin-right: 10px;
+        width: 40px;
+        height: 40px;
     }
 
     @media only screen and (max-width: 450px) {
@@ -293,6 +294,7 @@ export default {
         .botaoAdicionar {
             margin-top: 5px;
             width: 38px;
+            height: 35px;
         }
         .tituloTabela {
             font-size: 1.1rem;

@@ -149,6 +149,7 @@ export default {
         itemAtendimento.Descricao = selecionado.descricao
         itemAtendimento.Quantidade = quantidade.value
         itemAtendimento.TipoItem = "S"
+        itemAtendimento.ProdutoServicoId = parseInt(selecionado.id)
         itemAtendimento.ValorUnitario = selecionado.valor
         itemAtendimento.ValorTotal = (selecionado.valor * parseInt(quantidade.value))
 

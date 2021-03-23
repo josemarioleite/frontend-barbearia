@@ -1,7 +1,7 @@
 export default function Guids () {
     return new Promise(resolve => {
         var cliente = window.location.href
-        var guid = 0//'6CF79041-6785-49BE-8F24-4AABD55AD654'
+        var guid = 0
         if (cliente.includes('desenvolvimento')) {
             guid = '6CF79041-6785-49BE-8F24-4AABD55AD654'
         } else if (cliente.includes('brucebarber')) {

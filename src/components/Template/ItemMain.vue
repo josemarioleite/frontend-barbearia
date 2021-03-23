@@ -14,7 +14,6 @@
 
                 <div class="column items-center">
                     <q-avatar size="72px" class="bg-dark">
-                        <!-- <img src="https://cdn.quasar.dev/img/avatar4.jpg"> -->
                         <div class="text-white">{{nomeUsuario.substr(0, 1)}}</div>
                     </q-avatar>
 

@@ -105,7 +105,7 @@
                         </q-td>
                     </template>
                 </q-table>
-                <div class="row justify-center" style="padding-top: 20px">
+                <div class="row justify-center" style="padding-top: 5px">
                     <q-btn color="red" icon="close" label="Fechar" @click="fechaModal" />
                 </div>
               </q-page>

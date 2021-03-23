@@ -4,7 +4,7 @@
       <q-select :disable="somenteLeitura" class="col-md-8 col-xs-6 q-pr-sm" option-value="id" option-label="nome" v-model="produtoSelecionado" :options="produtos" label="Produto" />
       <q-select :disable="somenteLeitura" class="col-md-3 col-xs-6 q-pr-xs" option-value="value" option-label="label" v-model="quantidadeSelecionada" :options="quantidadeOpcoes" label="Quantidade" />
       <div class="col-md-1 col-xs-12 q-mt-xs botaoAdicionar">
-        <q-btn :disable="somenteLeitura" color="primary" icon="add" @click="adicionaServico">
+        <q-btn :disable="somenteLeitura" color="primary" icon="add" @click="adicionaProduto">
           <q-tooltip anchor="center left" self="center right">Adicionar Serviço</q-tooltip>
         </q-btn>
       </div>
@@ -115,7 +115,7 @@ export default {
         })
       })
     },
-    adicionaServico() {
+    adicionaProduto() {
       if (this.produtoSelecionado == null || this.produtoSelecionado == '') {
         this.$q.notify({
           type: 'negative',
@@ -148,6 +148,7 @@ export default {
         itemAtendimento.Descricao = selecionado.nome
         itemAtendimento.Quantidade = quantidade.value
         itemAtendimento.TipoItem = "P"
+        itemAtendimento.ProdutoServicoId = parseInt(selecionado.id)
         itemAtendimento.ValorUnitario = selecionado.valor
         itemAtendimento.ValorTotal = (selecionado.valor * parseInt(quantidade.value))
 

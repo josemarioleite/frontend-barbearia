@@ -127,10 +127,10 @@ export default {
                     message: 'Por favor, Selecione uma forma de Pagamento',
                     timeout: 2000
                 })
-            } else if (this.valorPagamento == '' || this.valorPagamento == null) {
+            } else if (this.valorPagamento == '' || this.valorPagamento == null || this.valorPagamento == 0) {
                 this.$q.notify({
                     type: 'negative',
-                    message: 'Por favor, insira o valor',
+                    message: 'Por favor, insira um valor correto',
                     timeout: 2000
                 })
             } else {
@@ -173,7 +173,7 @@ export default {
                     } else if (soma > this.valorTotal) {
                         this.$q.notify({
                             type: 'negative',
-                            message: 'Valor total excedido, por favor, insira um valor correto!',
+                            message: 'Valor total excedido, por favor, verifique...',
                             timeout: 3000
                         })
                     } else {

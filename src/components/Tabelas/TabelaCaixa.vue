@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { Get } from 'src/utils/Conexao.js'
+// import { Get } from 'src/utils/Conexao.js'
 
 export default {
     name: 'Tabela-Caixa',
@@ -50,15 +50,15 @@ export default {
     },
     methods: {
         recebeDadosTabela() {
-            if (this.tipoItem == 'P') {
-                Get('v1/caixa/produto').then(res => {
-                    this.dadosTabela = res.data
-                }).catch(err => console.log(err))
-            } else if (this.tipoItem == 'S') {
-                Get('v1/caixa/servico').then(res => {
-                    this.dadosTabela = res.data
-                }).catch(err => console.log(err))
-            }
+            // if (this.tipoItem == 'P') {
+            //     Get('v1/caixa/produto').then(res => {
+            //         this.dadosTabela = res.data
+            //     }).catch(err => console.log(err))
+            // } else if (this.tipoItem == 'S') {
+            //     Get('v1/caixa/servico').then(res => {
+            //         this.dadosTabela = res.data
+            //     }).catch(err => console.log(err))
+            // }
         }
     },
     created() {

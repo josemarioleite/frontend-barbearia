@@ -62,29 +62,6 @@
                       </div>
                   </div>
 
-                  <div class="row col-12 items-center justify-center">
-                    <label class="text-white">Porcentagem por Produto ?</label>
-                    <q-checkbox dark v-model="recebePorcentagemProduto" />
-                    <q-input v-show="recebePorcentagemProduto == true" 
-                        v-model.number="porcentagemProduto"
-                        reverse-fill-mask
-                        :error="erroPorcentagemProduto"
-                        color="dark"
-                        label-color="dark"
-                        bg-color="white"
-                        filled
-                        mask="#.##"
-                        suffix="%"
-                        prefix="%"
-                        class="col-md-3 col-xs-12"
-                        label="Porcentagem do Produto"
-                    >
-                        <template v-slot:prepend>
-                            <q-icon name="money" color="brown" />
-                        </template>
-                    </q-input>
-                  </div>
-
                   <q-table
                     dense
                     separator="cell"
@@ -133,14 +110,6 @@
 
                     <template v-slot:body-cell-porcentagem="props">
                         <q-td key="porcentagem" :props="props">{{props.row.porcentagem.toFixed(2)}} %</q-td>
-                    </template>
-
-                    <template v-slot:body-cell-geraPorcentagemProduto="props">
-                        <q-td key="geraPorcentagemProduto" :props="props">{{props.row.geraPorcentagemProduto === 'S' ? 'Sim' : 'Não'}}</q-td>
-                    </template>
-
-                    <template v-slot:body-cell-porcentagemProduto="props">
-                        <q-td key="porcentagemProduto" :props="props">{{props.row.porcentagemProduto.toFixed(2)}} %</q-td>
                     </template>
 
                     <template v-slot:body-cell-dataInclusao="props">
@@ -208,7 +177,6 @@ export default {
             cpfProfissional: '',
             telefoneProfissional: '',
             porcentagemProfissional: '',
-            porcentagemProduto: '',
             filtroTabela: '',
             totalLinhasTabela: [5],
             erroMSGTelefoneProfissional: '',
@@ -216,9 +184,7 @@ export default {
             erroMSGDataNascimentoProfissional: '',
             erroMSGCPFProfissional: '',
             erroMSGPorcentagemProfissional: '',
-            recebePorcentagemProduto: false,
             carregando: false,
-            erroPorcentagemProduto: false,
             erroPorcentagemProfissional: false,
             erroTelefoneProfissional: false,
             erroNomeProfissional: false,
@@ -234,8 +200,6 @@ export default {
                 { name: 'telefoneCelular', align: 'left', label: 'Telefone / Celular', headerClasses: 'bg-dark text-white' },
                 { name: 'cpf', align: 'center', label: 'CPF', headerClasses: 'bg-dark text-white' },
                 { name: 'porcentagem', align: 'right', label: 'Porcentagem %', headerClasses: 'bg-dark text-white' },
-                { name: 'geraPorcentagemProduto', align: 'center', label: '% Prod. Vendido', headerClasses: 'bg-dark text-white' },
-                { name: 'porcentagemProduto', align: 'right', label: 'Porcentagem no Produto %', headerClasses: 'bg-dark text-white' },
                 { name: 'dataInclusao', align: 'center', label: 'Data Inclusão', headerClasses: 'bg-dark text-white' },
                 { name: 'acoes', align: 'center', label: 'Ações', headerClasses: 'bg-dark text-white' },
             ]
@@ -401,14 +365,7 @@ export default {
                     novoProfissional.DataNascimento = await ConverteStringPraDatetime(this.dataNascimentoProfissional)
                     novoProfissional.CPF = this.cpfProfissional
                     novoProfissional.TelefoneCelular = this.telefoneProfissional
-                    novoProfissional.Porcentagem = parseInt(this.porcentagemProfissional)
-                    if (this.recebePorcentagemProduto == true) {
-                        novoProfissional.GeraPorcentagemProduto = 'S'
-                        novoProfissional.PorcentagemProduto = parseInt(this.porcentagemProduto)
-                    } else {
-                        novoProfissional.GeraPorcentagemProduto = 'N'
-                        novoProfissional.PorcentagemProduto = 0
-                    }
+                    novoProfissional.Porcentagem = parseFloat(this.porcentagemProfissional)
                     this.$q.notify({
                         message: 'Carregando...',
                         color: 'accent',
