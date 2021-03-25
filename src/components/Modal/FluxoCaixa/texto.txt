@@ -1,0 +1,20 @@
+ <q-item-section avatar class="col-md-1 col-xs-2">
+                    <q-avatar v-if="item.caixaAberto === 'S'" icon="price_check" size="40px" color="green" text-color="white" />
+                    <q-avatar v-else icon="payments" color="primary" text-color="white" />
+                </q-item-section>
+
+                <q-item-section avatar class="col-md-10 col-xs-8 espacoEntre">
+                    <div class="row">
+                        <q-item-label lines="1">{{item.nome}}</q-item-label>
+                        <div class="row col-12">
+                            <!-- <div class="col-9 text-grey-7 espacoTexto">{{item.observacao}}</div> -->
+                            <div class="col-9 text-grey-7 espacoTexto" caption v-if="item.updatedAt !== null">Última Abertura: {{new Date(item.updatedAt).toLocaleDateString('pt-BR')}}</div>
+                            <div class="col-9 text-grey-7 espacoTexto" caption v-else>Ainda não foi aberto</div>
+                        </div>
+                    </div>
+                </q-item-section>
+
+                <q-item-section side class="col-md-1 col-xs-1">
+                    <q-icon v-if="item.caixaAberto === 'S'" name="brightness_1" color="green" right />
+                    <q-icon v-else name="brightness_1" color="red" right />
+                </q-item-section>
