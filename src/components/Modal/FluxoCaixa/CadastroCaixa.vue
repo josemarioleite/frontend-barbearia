@@ -1,58 +1,76 @@
 <template>
-    <div class="col-12" style="padding: 5px">
-        <q-list v-for="item in dados" :key="item.id" bordered class="q-mb-xs rounded-borders col-12">
-            <q-slide-item ref="slideRef" @right="resetaSlider; deletarCaixa(item.id);" right-color="red">
-                <template v-slot:right>
-                    <div class="row items-center">Desativar caixar
-                        <q-icon right name="close" />
-                    </div>
-                </template>
+    <q-dialog v-model="statusModalCadastro">
+        <q-card>
+            <q-toolbar>
+                <q-toolbar-title>Cadastrar novo caixa</q-toolbar-title>
+                <q-btn @click="fechaModalCadastro" flat round dense icon="close" v-close-popup />
+            </q-toolbar>
 
-                <q-item>
-                    <q-item-section avatar>
-                        <q-avatar class="bg-dark">
-                            <div class="text-white">{{item.nome.substr(0, 1)}}</div>
-                        </q-avatar>
-                    </q-item-section>
-
-                    <q-item-section>{{item.nome}}</q-item-section>
-                </q-item>
-            </q-slide-item>
-        </q-list>        
-    </div>
+            <q-card-section>
+                <q-input :error="erroNomeCaixa" :error-message="erroMsgNomeCaixa" outlined v-model="nomeCaixa" label="Nome do caixa" stack-label dense class="q-mb-xs" />
+                <q-input outlined v-model="observacaoCaixa" label="Observação" stack-label dense class="q-mb-sm" />
+                <div class="column items-center">
+                    <q-btn v-show="abreModalAlteracao === false" @click="salvaNovoCaixa" align="center" color="green" icon="add" label="Salvar" size="12px" />
+                    <q-btn v-show="abreModalAlteracao === true" @click="alteraCaixa" align="center" color="green" icon="add" label="Alterar" size="12px" />
+                </div>
+            </q-card-section>
+        </q-card>
+    </q-dialog>
 </template>
 
 <script>
-import { Get, Delete } from 'src/utils/Conexao.js'
+import { Post, Put } from 'src/utils/Conexao.js'
 
 export default {
-    name: 'Cadastro-Caixa',
+    name: 'Caixa',
     data () {
         return {
-            statusModal: false,            
-            headerClass: '',
-            dados: []
+            abreModalAlteracao: false,
+            statusModalCadastro: false,            
+            erroNomeCaixa: false,
+            caixaId: 0,
+            erroMsgNomeCaixa: '',
+            nomeCaixa: null,
+            observacaoCaixa: 'S/ Observação'
         }
     },
     methods: {
-        obterCaixas() {
-            Get('v1/caixaoperador').then(res => {
-                if (parseInt(res.status) === 200) {
-                    this.dados = res.data
+        abreModalCadastro() {
+            this.statusModalCadastro = !this.statusModalCadastro
+        },
+        abreModalAtualizaCaixa(dados) {
+            this.statusModalCadastro = !this.statusModalCadastro
+            this.abreModalAlteracao = true
+            this.caixaId = dados.id
+            this.nomeCaixa = dados.nome
+            this.observacaoCaixa = dados.observacao
+        },
+        fechaModalCadastro() {
+            this.abreModalAlteracao = false
+            this.statusModalCadastro = !this.statusModalCadastro
+            this.limpaCampos()            
+        },
+        limpaCampos() {
+            this.CaixaId = 0
+            this.nomeCaixa = null
+            this.observacaoCaixa = null
+        },
+        validaCampos() {
+            return new Promise(resolve => {
+                var campoVazio = false
+                var texto = 'Este campo é obrigatório preencher'
+
+                if (this.nomeCaixa === '' || this.nomeCaixa === null) {
+                    this.erroNomeCaixa = true
+                    this.erroMsgNomeCaixa = texto
+                    campoVazio = true
                 } else {
-                    this.$q.notify({
-                        message: 'Não foi possível obter dados dos caixas',
-                        type: 'negative',
-                        timeout: 2000
-                    })
+                    this.erroNomeCaixa = false
                 }
-            }).catch(err => {
-                console.log(err)
-                this.$q.notify({
-                    message: 'Erro ao obter dados do Caixa',
-                    type: 'negative',
-                    timeout: 2000
-                })
+
+                if (campoVazio === false) {
+                    resolve(true)
+                }
             })
         },
         confirmacao(mensagem) {
@@ -64,92 +82,98 @@ export default {
                     persistent: true
                 }).onOk(() => {
                     resolve()
-                }).onCancel(() => {
-                    reject()
                 })
             })
         },
-        deletarCaixa(id) {
-            this.confirmacao('Tem certeza que deseja desativar este caixa ?').then(() => {
-                setTimeout(() => {
-                    Delete('v1/caixaoperador/' + parseInt(id)).then(res => {
-                        this.$q.notify({
-                            message: 'Desativando...',
-                            color: 'blue',
-                            timeout: 1000
-                        })
+        salvaNovoCaixa() {
+            this.validaCampos().then(() => {
+                this.confirmacao('Deseja incluir este novo caixa ?').then(() => {
+                    let caixa = Object()
+                    caixa.Nome = this.nomeCaixa
+                    caixa.Observacao = this.observacaoCaixa
 
-                        if (res.data.status == true) {
-                            this.$q.notify({
-                                message: res.data.msg,
-                                color: 'green',
-                                timeout: 2000
-                            })
-                            this.obterCaixas()
-                        } else {
-                            this.$q.notify({
-                                message: res.data.msg,
-                                color: 'red',
-                                timeout: 2000
-                            })
-                        }
-                    }).catch(err => {
-                        this.$q.notify({
-                            message: 'Erro',
-                            caption: 'Não foi possível fazer inclusão, tente novamente mais tarde',
-                            color: 'red'
-                        })
-                        console.log(err)
+                    this.$q.notify({
+                        message: 'Carregando...',
+                        color: 'blue',
+                        timeout: 1000
                     })
-                }, 2000);
-            }).catch(() => {
-                this.$refs.slideRef
+
+                    setTimeout(() => {
+                        Post('v1/caixaoperador/cadastro', caixa).then(res => {
+                            if (res.data.status == true) {
+                                this.$q.notify({
+                                    message: res.data.msg,
+                                    color: 'green',
+                                    timeout: 2000
+                                })
+                                this.fechaModalCadastro()
+                                this.$emit('atualizaGrade')
+                            } else {
+                                this.$q.notify({
+                                    message: res.data.msg,
+                                    color: 'red',
+                                    timeout: 2000
+                                })
+                            }
+                        }).catch(err => {
+                            this.$q.notify({
+                                message: 'Erro',
+                                caption: 'Não foi possível fazer inclusão, tente novamente mais tarde',
+                                color: 'red'
+                            })
+                            console.log(err)
+                        })
+                    }, 1000);
+                })
             })
         },
-        resetaSlider({reset}) {
-            this.finalize(reset)
-        },
-        finalize (reset) {
-            this.timer = setTimeout(() => {
-                reset()
-            }, 2000)
+        alteraCaixa() {
+            this.validaCampos().then(() => {
+                this.confirmacao('Deseja alterar esse caixa ?').then(() => {
+                    this.$q.notify({
+                        message: 'Carregando...',
+                        color: 'blue',
+                        timeout: 2000
+                    })
+
+                    let alteraCaixa = Object()
+                    alteraCaixa.Id = this.caixaId
+                    alteraCaixa.Nome = this.nomeCaixa
+                    alteraCaixa.Observacao = this.observacaoCaixa
+
+                    setTimeout(() => {
+                        Put('v1/caixaoperador/alteracao/' + this.caixaId, alteraCaixa).then(res => {
+                            if (res.data.status == true) {
+                                this.$q.notify({
+                                    message: res.data.msg,
+                                    color: 'green',
+                                    timeout: 2000
+                                })
+                                this.fechaModalCadastro()
+                                this.$emit('atualizaGrade')
+                            } else {
+                                this.$q.notify({
+                                    message: res.data.msg,
+                                    color: 'red',
+                                    timeout: 2000
+                                })
+                            }
+                        }).catch(err => {
+                            this.$q.notify({
+                                message: 'Erro',
+                                caption: 'Não foi possível fazer inclusão, tente novamente mais tarde',
+                                color: 'red'
+                            })
+                            console.log(err)
+                        })
+                    }, 1500);
+                })
+            })
         }
-    },
-    beforeDestroy() {
-        clearTimeout(this.timer)
-    },
-    created() {
-        this.obterCaixas()
-        
     }
 }
 </script>
 
 <style>
-.espacoEntre {
-    padding-left: 20px;
-}
 
-.espacoTexto {
-    width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-    font-size: 12px;
-}
-
-.linhaInclusao {
-    width: 85%;
-}
-
-@media only screen and (max-width: 599px) {
-    .espacoEntre {
-        padding: 1px;
-    }
-
-    .linhaInclusao {
-        display: none;
-    }
-}
 </style>

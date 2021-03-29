@@ -65,60 +65,29 @@
 
             <q-page-container>
                 <q-page>
-                    <div class="col-md-6 row justify-end items-center q-pa-sm">
-                        <hr class="bg-primary linhaInclusao">
-                        <q-btn @click="abreModalCadastro" flat round dense icon="add" color="white" class="bg-primary justify-start" />
-                    </div>
-                    <CadastroCaixa v-if="nameRouter === 'cadastrocaixa'" />
+                    <Caixa v-if="nameRouter === 'cadastrocaixa'" />
                 </q-page>
             </q-page-container>
         </q-layout>
-        <q-dialog v-model="statusModalCadastro">
-            <q-card>
-                <q-toolbar>
-                    <q-toolbar-title>Cadastrar novo caixa</q-toolbar-title>
-                    <q-btn @click="fechaModalCadastro" flat round dense icon="close" v-close-popup />
-                </q-toolbar>
-
-                <q-card-section>
-                    <q-input :error="erroNomeCaixa" :error-message="erroMsgNomeCaixa" outlined v-model="nomeCaixa" label="Nome do caixa" stack-label dense class="q-mb-xs" />
-                    <q-input :error="erroObsCaixa" :error-message="erroMsgObsCaixa" outlined v-model="observacaoCaixa" label="Observação" stack-label dense class="q-mb-sm" />
-                    <div class="column items-center">
-                        <q-btn @click="salvaNovoCaixa" align="center" color="green" icon="add" label="Salvar" size="12px" />
-                    </div>
-                </q-card-section>
-            </q-card>
-        </q-dialog>
         <ModalDadosCaixa ref="modalDadosCaixa" />
     </q-dialog>
 </template>
 
 <script>
-import CadastroCaixa from './FluxoCaixa/CadastroCaixa.vue'
+import Caixa from './FluxoCaixa/Caixa.vue'
 import ModalDadosCaixa from './ModalDadosCaixa.vue'
-import {Post} from 'src/utils/Conexao.js'
 
 export default {
-  components: { CadastroCaixa, ModalDadosCaixa },
+  components: { Caixa, ModalDadosCaixa },
   data () {
     return {
         drawer: false,
         exibeModal: false,
         miniState: true,
-        statusModalCadastro: false,
-        erroNomeCaixa: false,
-        erroObsCaixa: false,
-        erroMsgNomeCaixa: '',
-        erroMsgObsCaixa: '',
-        nomeCaixa: '',
-        observacaoCaixa: '',
         nameRouter: 'cadastrocaixa'
     }
   },
   methods : {
-    abreModalCadastro() {
-        this.statusModalCadastro = !this.statusModal
-    },
     exibirModal() {
         this.exibeModal = !this.exibeModal
     },
@@ -138,84 +107,12 @@ export default {
         this.exibeModal = !this.exibeModal
         this.nameRouter = null
     },
-    fechaModalCadastro() {
-        this.statusModalCadastro = !this.statusModalCadastro
-        this.nomeCaixa = null
-        this.observacaoCaixa = null
-    },
-    salvaNovoCaixa() {
-        this.validaCampos().then(() => {
-            this.confirmacao('Deseja incluir este novo caixa ?').then(() => {
-                var caixa = Object()
-                caixa.Nome = this.nomeCaixa
-                caixa.Observacao = this.observacaoCaixa
-
-                this.$q.notify({
-                    message: 'Carregando...',
-                    color: 'blue',
-                    timeout: 1000
-                })
-
-                setTimeout(() => {
-                    Post('v1/caixaoperador/cadastro', caixa).then(res => {
-                        if (res.data.status == true) {
-                            this.$q.notify({
-                                message: res.data.msg,
-                                color: 'green',
-                                timeout: 2000
-                            })
-                            this.fechaModalCadastro()
-                        } else {
-                            this.$q.notify({
-                                message: res.data.msg,
-                                color: 'red',
-                                timeout: 2000
-                            })
-                        }
-                    }).catch(err => {
-                        this.$q.notify({
-                            message: 'Erro',
-                            caption: 'Não foi possível fazer inclusão, tente novamente mais tarde',
-                            color: 'red'
-                        })
-                        console.log(err)
-                    })
-                }, 1000);
-            })
-        })
-    },
     clicavel(router) {
         this.nameRouter = router
     },
     abreDadosCaixa() {
         this.$refs.modalDadosCaixa.exibirModal()
-    },
-    validaCampos() {
-        return new Promise(resolve => {
-            var campoVazio = false
-            var texto = 'Este campo é obrigatório preencher'
-
-            if (this.nomeCaixa === '' || this.nomeCaixa === null) {
-                this.erroNomeCaixa = true
-                this.erroMsgNomeCaixa = texto
-                campoVazio = true
-            } else {
-                this.erroNomeCaixa = false
-            }
-
-            if (this.observacaoCaixa === '' || this.observacaoCaixa === null) {
-                this.erroObsCaixa = true
-                this.erroMsgObsCaixa = texto
-                campoVazio = true
-            } else {
-                this.erroObsCaixa = false
-            }
-
-            if (campoVazio === false) {
-                resolve(true)
-            }
-        })
-    },
+    }
   }
 }
 </script>

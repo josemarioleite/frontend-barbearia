@@ -9,8 +9,9 @@ module.exports = function (/* ctx */) {
       'app.sass'
     ],
     extras: [
-      'roboto-font', // optional, you are not bound to it
-      'material-icons', // optional, you are not bound to it
+      'roboto-font',
+      'material-icons',
+      'fontawesome-v5'
     ],
     build: {
       vueRouterMode: 'hash',
