@@ -33,9 +33,11 @@ cfg.module.rules.push({
     framework: {
       iconSet: 'material-icons', // Quasar icon set
       lang: 'pt-br', // Quasar language pack
-      config: {},
+      config: {
+        loading: {}
+      },
       importStrategy: 'auto',
-      plugins: ['Notify', 'Dialog']
+      plugins: ['Notify', 'Dialog', 'Loading']
     },
     animations: [],
     ssr: {

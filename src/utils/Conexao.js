@@ -100,3 +100,15 @@ export function Put (rota, objeto) {
     })
   })
 }
+
+export function PutSemObjecto(rota) {
+  return new Promise((resolve, reject) => {
+    preparaConexao().then(() => {
+      axios.put(url + rota).then((result) => {
+        resolve(result)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  })
+}
