@@ -32,14 +32,6 @@
                             <q-item-section>Caixa</q-item-section>
                         </q-item>
 
-                        <q-item @click="clicavel('aberturafechamento')" :active="nameRouter === 'aberturafechamento'" clickable v-ripple>
-                            <q-item-section avatar>
-                                <q-icon name="local_atm" />
-                            </q-item-section>
-
-                            <q-item-section>Abertura/Fechamento</q-item-section>
-                        </q-item>
-
                         <q-item @click="abreDadosCaixa" :active="nameRouter === 'movimento'" clickable v-ripple>
                             <q-item-section avatar>
                                 <q-icon name="price_check" />
@@ -84,7 +76,7 @@ export default {
         drawer: false,
         exibeModal: false,
         miniState: true,
-        nameRouter: 'cadastrocaixa'
+        nameRouter: ''
     }
   },
   methods : {
@@ -113,6 +105,9 @@ export default {
     abreDadosCaixa() {
         this.$refs.modalDadosCaixa.exibirModal()
     }
+  },
+  created() {
+      this.nameRouter = 'cadastrocaixa'
   }
 }
 </script>

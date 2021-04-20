@@ -4,7 +4,7 @@
             <hr class="bg-primary linhaInclusao">
             <q-btn @click="abreModalCadastro" flat round dense icon="add" color="white" class="bg-primary justify-start">
                 <q-tooltip anchor="center left" self="center right" :offset="[10, 10]">
-                    <strong>Cadastrar</strong>novo caixa
+                    <strong>Cadastrar </strong>novo caixa
                 </q-tooltip>
             </q-btn>
         </div>
@@ -43,7 +43,7 @@
                 </q-tooltip>
             </q-btn>
         </q-page-sticky>
-        <PeriodoCaixa ref="periodoCaixa" @atualizaGrade="obterCaixas" />
+        <PeriodoCaixa ref="periodoCaixa" @atualizaGrade="showLoading" />
         <CadastroCaixa ref="cadastroCaixa" @atualizaGrade="obterCaixas" />
     </div>
 </template>
@@ -174,7 +174,7 @@ export default {
                 this.obterCaixas()
             }
         },
-        showLoading () {
+        showLoading() {
             this.$q.loading.show()
             this.timer = setTimeout(() => {
                 this.obterCaixas()

@@ -48,6 +48,7 @@ export default {
         removeItensLocalStorage() {
             localStorage.removeItem('token')
             localStorage.removeItem('tokenContent')
+            localStorage.removeItem('PeriodoCaixa')
             this.$router.push('/')
             window.history.forward()
         },

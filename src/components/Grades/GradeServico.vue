@@ -91,7 +91,6 @@
                 </q-tab-panels>
             </q-card>
         </div>
-
         <ModalOrdemServico ref="modalOrdemServico" @atualizaGrade="recebeDadosTabelas('A')" @atualizaGradeEmAberto="recebeDadosTabelas('A')" @atualizaGradeFinanceiro="recebeDadosTabelas('B')" />
         <ModalProduto ref="modalProduto" />
         <ModalProfissional ref="modalProfissional" />
@@ -132,6 +131,7 @@ export default {
             filtroBuscar: '',
             separator: 'cell',
             dadosUsuario: {},
+            caixaOperador: [],
             dados: [],
             colunas: [
                 { name: 'showme', required: true, label: 'Inclusão', align: 'center', classes: 'bg-grey-2 text-dark', headerClasses: 'bg-dark text-white' },
